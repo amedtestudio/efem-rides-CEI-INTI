@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #1b1464;
+  color: white;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.img-box {
+  width: 25%;
+  min-width: 90px;
+  max-width: 140px;
+  aspect-ratio: 1 / 1; /* 🔥 ESTO ES LA CLAVE */
+  padding: 5px;
+}
+
+.img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.content {
+  flex: 1;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.subtitle {
+  font-style: italic;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.content {
+  flex: 1;
+}
+
+.texto {
+  font-size: 15px;
+}
+
+@media (max-width: 600px) {
+  .texto {
+    font-size: 13px;
+  }
+
+  .title {
+    font-size: 16px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="img-box">
+    <img id="imagen">
+  </div>
+
+  <div class="content">
+    <div class="title">Efeméride del día</div>
+    <div class="subtitle">"Un día como hoy"</div>
+    <div class="texto" id="texto"></div>
+  </div>
+</div>
+
+<script>
+const efemerides = {
+  // --- ENERO ---
+  "1-2": {
+    texto: "🔥 2 de enero: Nacimiento de Rudolf Clausius (1822), padre de la entropía y la termodinámica. Sus estudios sobre el calor y la eficiencia energética son pilares de la ingeniería química.",
+    img: "https://mauriciomedinasierra.wordpress.com/wp-content/uploads/2015/05/rudolf-clausius-1822-1888-granger.jpg"
+  },
+  "1-5": {
+    texto: "📷 5 de enero: Descubrimiento de los Rayos X (1895) por Wilhelm Röntgen. Esta tecnología revolucionó la medicina y el análisis de materiales.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTENFk3pX7lDO8r8MCiJzC65cJFqYkKYpqhSQ&s"
+  },
+  "1-8": {
+    texto: "🪐 8 de enero: Nacimiento de Stephen Hawking (1942), físico teórico y divulgador científico. Sus estudios sobre agujeros negros y el origen del universo inspiraron a generaciones.",
+    img: "https://www.biografiasyvidas.com/biografia/h/fotos/hawking_stephen_1.jpg"
+  },
+  "1-20": {
+    texto: "⚡ 20 de enero: Nacimiento de André-Marie Ampère (1775), fundamental en el electromagnetismo. Su nombre es la unidad de medida de la corriente eléctrica.",
+    img: "https://www.biografiasyvidas.com/biografia/a/fotos/ampere.jpg"
+  },
+  "1-22": {
+    texto: "❄️ 22 de enero: Nacimiento de Lev Landau (1908), genio de la física de la materia condensada. Premio Nobel por sus teorías sobre el helio líquido y la superfluidez.",
+    img: "https://www.biografiasyvidas.com/biografia/l/fotos/landau_lev.jpg"
+  },
+  "1-25": {
+    texto: "📗 25 de enero: Nacimiento de Robert Boyle (1627), autor de 'El químico escéptico' y la Ley de Boyle. Considerado el padre de la química moderna por su método experimental.",
+    img: "https://www.shutterstock.com/image-vector/robert-boyle-angloirish-natural-philosopher-600w-2363759987.jpg"
+  },
+
+  // --- FEBRERO ---
+  "2-1": {
+    texto: "⚛️ 1 de febrero: Nacimiento de Emilio Segrè (1905), descubridor del tecnecio y el astato. Sus hallazgos ampliaron la tabla periódica y la comprensión de los elementos radiactivos.",
+    img: "https://edgjuhnz6to.exactdn.com/wp-content/uploads/2025/03/emilio-segre-orig-scaled.jpeg?strip=all"
+  },
+  "2-7": {
+    texto: "🔬 7 de febrero: Nacimiento de Ulrike Diebold (1961), líder en ciencia de superficies. Sus investigaciones sobre óxidos metálicos son clave para la catálisis industrial.",
+    img: "https://static.wixstatic.com/media/e9e108_5497019b4d7140159032004b6f979eed~mv2.png/v1/fill/w_378,h_378,al_c,lg_1,q_85,enc_avif,quality_auto/e9e108_5497019b4d7140159032004b6f979eed~mv2.png"
+  },
+  "2-8": {
+    texto: "📊 8 de febrero: Nacimiento de Dmitri Mendeléyev (1834), arquitecto de la Tabla Periódica. Su organización de los elementos predijo propiedades de elementos aún no descubiertos.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/1/14/Mendeleev_Photographische_Gesellschaft_3.jpg"
+  },
+  "2-11": {
+    texto: "👩‍🔬 11 de febrero: Día Internacional de la Mujer y la Niña en la Ciencia. Celebramos el talento femenino y promovemos vocaciones científicas sin brechas de género.",
+    img: "https://biblioteca.ulpgc.es/sites/default/files/repositorio_de_docum152/sc_si/cartel-nina-ciencia.jpg"
+  },
+  "2-14": {
+    texto: "💻 14 de febrero: Lanzamiento del ENIAC (1946), la primera computadora de propósito general. Este hito digitalizó el cálculo y permitió la simulación de procesos químicos.",
+    img: "https://miro.medium.com/v2/0*ZSqX5RecX6dAmTmZ.jpg"
+  },
+  "2-15": {
+    texto: "🥤 15 de febrero: Descubrimiento del proceso para obtener Aluminio por electrólisis (Charles Hall, 1886). Este método abarató el metal y lo hizo accesible para toda la industria.",
+    img: "https://images.my.labster.com/v2/ZAP/a0ce727e-2c1f-4a79-91d0-032b684f9b81/ZAP_ElectrolysisMetal.es_ES.x512.png"
+  },
+  "2-18": {
+    texto: "🚀 18 de febrero: Aterrizaje del Rover Perseverance en Marte (2021). Este vehículo busca evidencias de vida pasada y recolecta muestras para futuras misiones.",
+    img: "https://img2.rtve.es/n/2076356"
+  },
+  "2-19": {
+    texto: "⚗️ 19 de febrero: Nacimiento de Svante Arrhenius (1859), Nobel de Química y padre de la cinética química. Su teoría de disociación electrolítica revolucionó la química física.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6c/Arrhenius2.jpg/250px-Arrhenius2.jpg"
+  },
+  "2-23": {
+    texto: "🧲 23 de febrero: Nacimiento de Johannes Diderik van der Waals (1837). Sus fuerzas intermoleculares explican el comportamiento de gases reales y líquidos.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/7/7c/Johannes_Diderik_van_der_Waals.jpg"
+  },
+
+  // --- MARZO ---
+  "3-1": {
+    texto: "☢️ 1 de marzo: Descubrimiento de la Radiactividad por Henri Becquerel (1896). Este hallazgo accidental abrió la puerta a la física nuclear y la medicina radiactiva.",
+    img: "https://rinconeducativo.org/wp-content/uploads/2021/12/becquerel_antoine_henri.jpg"
+  },
+  "3-3": {
+    texto: "🌿 3 de marzo: Día Mundial de la Naturaleza. Recordamos la importancia de preservar la biodiversidad y los ecosistemas para un desarrollo sostenible.",
+    img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg-LmInGmgJbWMOLwS4shpwgECUyyb9KDHtktGUFw_ldaMuvFgiQpRy27LxdV5FRjVqOnNdPiu-EC7ME0nRTlFbwiehu3FLbORqx-bQMzq6LfFGUNeCAOCeEvmNK5fV9gCnPLApHt3k/s1600/unnamed.jpg"
+  },
+  "3-5": {
+    texto: "📏 5 de marzo: Nacimiento de Jacques Babinet (1794), físico que estandarizó la unidad del metro. Su trabajo en óptica y metrología es fundamental para las mediciones precisas.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/8/84/Jacques_Babinet.jpg"
+  },
+  "3-8": {
+    texto: "♀️ 8 de marzo: Día Internacional de la Mujer. Conmemoramos la lucha por la igualdad de derechos y el reconocimiento del aporte femenino en todos los ámbitos.",
+    img: "https://static.vecteezy.com/system/resources/previews/017/678/604/non_2x/international-women-s-day-on-march-8-illustration-to-celebrate-the-achievements-of-women-in-flat-cartoon-hand-drawn-landing-page-templates-vector.jpg"
+  },
+  "3-14": {
+    texto: "π 14 de marzo: Día de Pi y nacimiento de Albert Einstein (1879). Celebramos el número irracional más famoso y la mente que revolucionó la física con la relatividad.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/28/Albert_Einstein_Head_cleaned.jpg"
+  },
+  "3-20": {
+    texto: "🔋 20 de marzo: Invención de la Pila Eléctrica por Alessandro Volta (1800). La primera fuente de corriente continua, precursora de todas las baterías modernas.",
+    img: "https://rinconeducativo.org/wp-content/uploads/2021/02/volta_alessandro_pila.jpg"
+  },
+  "3-22": {
+    texto: "💧 22 de marzo: Día Mundial del Agua, vital para la ingeniería ambiental. Promovemos la gestión sostenible del recurso más preciado para la vida y la industria.",
+    img: "https://cies.org.pe/wp-content/uploads/2020/05/dia_agua.jpg"
+  },
+
+  // --- ABRIL ---
+  "4-3": {
+    texto: "📱 3 de abril: Primera llamada por teléfono celular (1973). Martin Cooper llamó a su competidor, iniciando la era de la comunicación móvil personal.",
+    img: "https://media.es.wired.com/photos/642dcb3dbaa2f3d0876e126e/3:2/w_1943,h_1295,c_limit/Un%20ingeniero%20en%20Bell%20Labs,%20hace%20una%20demostracio%CC%81n%20del%20uso%20del%20primer%20tele%CC%81fono%20celular.%20Este%20no%20era%20au%CC%81n%20verdaderamente%20independiente..png"
+  },
+  "4-7": {
+    texto: "🏥 7 de abril: Día Mundial de la Salud. Reflexionamos sobre el acceso universal a la salud y el rol de la ingeniería en equipos médicos y saneamiento.",
+    img: "https://noticias-pe.laiglesiadejesucristo.org/media/960x720/DM-Salud-2020.jpg"
+  },
+  "4-10": {
+    texto: "🕳️ 10 de abril: Primera imagen de un Agujero Negro (2019). Una hazaña científica internacional que confirmó visualmente la teoría de Einstein.",
+    img: "https://www.almaobservatory.org//wp-content/uploads/2019/04/ahtfdjtja.jpg"
+  },
+  "4-12": {
+    texto: "🚀 12 de abril: Día de la Cosmonáutica (Yuri Gagarin, 1961). Celebramos el primer vuelo espacial humano, un hito que abrió las puertas a la exploración del cosmos.",
+    img: "https://elordenmundial.com/wp-content/uploads/2022/04/El-cosmonauta-sovietico-Yuri-Gagarin-se-convierte-en-el-primer-hombre-lanzado-al-espacio.jpg"
+  },
+  "4-19": {
+    texto: "⚛️ 19 de abril: Nacimiento de Glenn T. Seaborg (1912), descubridor de elementos transuránicos. Su trabajo añadió 10 elementos a la tabla periódica.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ033zvCgdPF8l1dV-miX6kO_X-UlIkf0vYcA&s"
+  },
+  "4-22": {
+    texto: "🌍 22 de abril: Día de la Tierra. Desde 1970, promueve la conciencia sobre el impacto ambiental y la sostenibilidad.",
+    img: "https://www.toulouselautrec.edu.pe/sites/default/files/styles/730x500/public/22%20de%20abril%20dia%20internacional%20de%20la%20tierra.jpg?itok=M8DyZ2ma"
+  },
+  "4-23": {
+    texto: "⚛️ 23 de abril: Nacimiento de Max Planck (1858), padre de la física cuántica. Su constante (h) es fundamental para entender la energía a nivel atómico.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Max_Planck_%281858-1947%29.jpg/960px-Max_Planck_%281858-1947%29.jpg"
+  },
+  "4-26": {
+    texto: "⚠️ 26 de abril: Desastre de Chernóbil (1986), lección histórica de seguridad de procesos. Este trágico evento transformó para siempre los protocolos de seguridad nuclear.",
+    img: "https://c.files.bbci.co.uk/0D0D/production/_118214330_f216b505-7abd-4141-9fa6-f0935d91db91.jpg"
+  },
+
+  // --- MAYO ---
+  "5-1": {
+    texto: "🏛️ 1 de mayo: Inauguración de la Exposición Universal de Chicago (1893), escaparate de ingeniería. Grandes innovaciones como el motor diésel y la rueda de la fortuna se presentaron allí.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/1893_world_columbian_exposition.jpg/250px-1893_world_columbian_exposition.jpg"
+  },
+  "5-12": {
+    texto: "🔬 12 de mayo: Nacimiento de Dorothy Hodgkin (1910), pionera en cristalografía de rayos X. Descifró estructuras de la penicilina, insulina y vitamina B12.",
+    img: "https://mujeresconciencia.com/app/uploads/2016/05/D.-C.-Hodgkin-3.jpg"
+  },
+  "5-20": {
+    texto: "📏 20 de mayo: Día Mundial de la Metrología. Homenaje a la ciencia de las mediciones, esencial para la calidad, seguridad y comercio internacional.",
+    img: "https://www.gob.mx/cms/uploads/article/main_image/145099/dia-Metrologia2.jpg"
+  },
+  "5-21": {
+    texto: "🚀 21 de mayo: ¡Aniversario del CEI INTI! En 2023 nace este círculo de investigación con la misión de impulsar la innovación, tecnología e industria desde las aulas.",
+    img: "https://scontent.flim13-1.fna.fbcdn.net/v/t39.30808-6/474474047_514668764966780_3606394941933722225_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=13d280&_nc_ohc=l-c7v4CkvlIQ7kNvwExFFnU&_nc_oc=AdqQOBcPpIoNil8yiZIcaFhI7jiuRz6YbxeGr13yUVlnaGDqk6PglDek_bdJZQG8MLQ&_nc_zt=23&_nc_ht=scontent.flim13-1.fna&_nc_gid=AxMhfO9-if3soK746llFeA&oh=00_Af25zzbGKZRX3U7fPdyN2a14T7cZytj3kZDscFPB2t4wwA&oe=69F046F9"
+  },
+  "5-24": {
+    texto: "⚙️ 24 de mayo: James Watt adapta el Regulador Centrífugo a la máquina de vapor. Este hito marca el inicio del Control Automático de procesos, permitiendo que las máquinas se autorregulen por primera vez en la historia.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/1/1e/Centrifugal_governor.png"
+  },
+  "5-26": {
+    texto: "📜 26 de mayo: Creación del CEI INTI en la UNSAAC. Aprobado mediante resolución Nro. 003-2025-CF-FIP-UNSAAC, institucionalizando la investigación en ingeniería.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR2gZK0oNFyHmMlKd4--xEbHN4LiIXPovFYiw&s"
+  },
+  "5-29": {
+    texto: "🌞 29 de mayo: Confirmación de la Teoría de la Relatividad durante un eclipse (1919). Las mediciones de Eddington validaron la curvatura de la luz por gravedad.",
+    img: "https://josevicentediaz.com/wp-content/uploads/2019/07/einsteinseclipse.jpg"
+  },
+
+  // --- JUNIO ---
+  "6-5": {
+    texto: "🌱 5 de junio: Día Mundial del Medio Ambiente. Fomentamos acciones globales para proteger nuestros ecosistemas y combatir el cambio climático.",
+    img: "https://www.infobae.com/new-resizer/fqPKgiTHzFcG6VE2TFKoADd9bo8=/arc-anglerfish-arc2-prod-infobae/public/VYKIS3TIMRDCJHDMOFIVHX5XHI.jpg"
+  },
+  "6-8": {
+    texto: "🌊 8 de junio: Día Mundial de los Océanos. Sensibilizamos sobre la importancia de los mares y la urgencia de reducir la contaminación marina.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNww6feVoDq66aRtM567JpZp0FDo54UiE54A&s"
+  },
+  "6-10": {
+    texto: "💎 10 de junio: Descubrimiento de la Baquelita por Leo Baekeland (1907). El primer plástico totalmente sintético, marcó el inicio de la era de los polímeros en la ingeniería química.",
+    img: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgOLOVeXP8okil3S60eyb1y7vl3ZcEAjvNPK6odqEJrhF3Ysdzl8lFgNt7kNxPQsuPRZaxUQ_7vVKcQW4Ut9g2IG0P8Ad1tMSDBgf9ueLP6wGm2-XEXBc6xRv5AvaWD2F3YfkAhPuomKpj9/s1600/baquelita02+Imagen+3.png"
+  },
+  "6-13": {
+    texto: "⚡ 13 de junio: Nacimiento de James Clerk Maxwell (1831). Sus ecuaciones unificaron electricidad, magnetismo y óptica, prediciendo las ondas electromagnéticas.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKfcaW_wx89ikXxmIF0-xdHLD13vsuJmc2Yg&s"
+  },
+  "6-15": {
+    texto: "⛈️ 15 de junio: Benjamín Franklin demuestra que el rayo es electricidad (1752). Su experimento con la cometa sentó las bases para los pararrayos modernos.",
+    img: "https://diariopampero.com/wp-content/uploads/2023/06/benjamin_franklin-1024x700.jpg"
+  },
+  "6-18": {
+    texto: "🧬 18 de junio: Nacimiento de Dudley Herschbach (1932), pionero en dinámica de reacciones químicas. Nobel por estudiar las colisiones moleculares a nivel microscópico.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/25/Herschbach.JPG"
+  },
+  "6-23": {
+    texto: "👩‍🏭 23 de junio: Día Internacional de la Mujer en la Ingeniería. Reconocemos el aporte vital de las ingenieras en el desarrollo tecnológico y científico mundial.",
+    img: "https://www.automaticaeinstrumentacion.com/images/showid2/4319742?w=900&mh=700"
+  },
+  "6-30": {
+    texto: "☄️ 30 de junio: Día del Asteroide. Concientizamos sobre los riesgos de impacto y promovemos la defensa planetaria mediante la ciencia y tecnología.",
+    img: "https://cloudfront-us-east-1.images.arcpublishing.com/elcomercio/O5OOPCLYBFA37NGDDFX7S7UDSU.jpg"
+  },
+
+  // --- JULIO ---
+  "7-2": {
+    texto: "🔬 2 de julio: Nacimiento de Sir William Bragg (1862), cristalografía de rayos X. Su ley permite determinar estructuras atómicas y moleculares con precisión.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/26/Wh-bragg.jpg"
+  },
+  "7-9": {
+    texto: "⚡ 9 de julio: Nacimiento de Nikola Tesla (1856), genio de la electricidad. Inventor de la corriente alterna, el motor eléctrico y la bobina Tesla.",
+    img: "https://content-historia.nationalgeographic.com.es/medio/2019/07/09/nikola-tesla_b0f93a52_1280x1671.jpeg"
+  },
+  "7-10": {
+    texto: "🧪 10 de julio: Nacimiento de Kurt Alder (1902), creador de la reacción Diels-Alder. Esta reacción es fundamental en la síntesis de compuestos cíclicos y productos naturales.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/30/Kurt_Alder_Nobel.jpg"
+  },
+  "7-12": {
+    texto: "🔭 12 de julio: Lanzamiento del telescopio James Webb (primeras imágenes, 2022). El observatorio más potente jamás construido, explorando los orígenes del universo.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/50/James_Webb_Space_Telescope.jpg"
+  },
+  "7-18": {
+    texto: "☢️ 18 de julio: Descubrimiento del Polonio por los Curie (1898). Marie y Pierre Curie aislaron este elemento radiactivo, nombrado en honor a Polonia.",
+    img: "https://okdiario.com/img/2021/12/02/madame-curie-y-la-historia-del-polonio.jpg"
+  },
+  "7-20": {
+    texto: "🌙 20 de julio: Llegada del hombre a la Luna (Apolo 11, 1969). 'Un pequeño paso para el hombre, un gran salto para la humanidad'.",
+    img: "https://content.nationalgeographic.com.es/medio/2016/07/20/apolo-bandera-astronautas_2701a04d.jpg"
+  },
+  "7-23": {
+    texto: "🌌 23 de julio: Nacimiento de Vera Rubin (1928), descubridora de la materia oscura. Sus observaciones de galaxias evidenciaron la existencia de masa invisible.",
+    img: "https://content.nationalgeographic.com.es/medio/2023/07/15/vera-rubin-1974_42d4d597_230715113424_1280x1017.jpg"
+  },
+  "7-25": {
+    texto: "🧬 25 de julio: Nacimiento de Rosalind Franklin (1920), clave en la estructura del ADN. Su fotografía 51 fue fundamental para descubrir la doble hélice.",
+    img: "https://www.worldhistory.org/img/r/p/500x600/21338.jpg?v=1766834060-1764574735"
+  },
+
+  // --- AGOSTO ---
+  "8-1": {
+    texto: "💨 1 de agosto: Descubrimiento del Oxígeno por Joseph Priestley (1774). Aisló el 'aire desflogisticado' y demostró que los ratones vivían más tiempo respirándolo.",
+    img: "https://time.graphics/uploadedFiles/500/e9/2c/e92c0527177a29f2b9c2a4ac6b4dabf2.jpg"
+  },
+  "8-5": {
+    texto: "🧪 5 de agosto: Nacimiento del Dr. Oswaldo Baca Mendoza (1908) en Cusco. Científico, catedrático de la UNSAAC y autor de la 'Tabla Periódica Natural' basada en leyes genéticas atómicas.",
+    img: "https://upload.wikimedia.org/wikipedia/en/9/97/Oswaldo_Baca.jpg"
+  },
+  "8-8": {
+    texto: "⚛️ 8 de agosto: Nacimiento de Paul Dirac (1902), físico cuántico. Su ecuación predijo la existencia de antimateria, uno de los mayores logros de la física teórica.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Paul_Dirac%2C_1933%2C_head_and_shoulders_portrait%2C_bw.jpg"
+  },
+  "8-12": {
+    texto: "🐱 12 de agosto: Nacimiento de Erwin Schrödinger (1887), mecánica ondulatoria. Su famoso 'gato' ilustra las paradojas de la superposición cuántica.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Erwin_Schr%C3%B6dinger_%281933%29.jpg"
+  },
+  "8-20": {
+    texto: "🔣 20 de agosto: Nacimiento de Jöns Jacob Berzelius (1779), creador de la notación química moderna. Introdujo los símbolos actuales de los elementos (O, H, Fe, etc.) y acuñó los términos 'catálisis' y 'alotropía'.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/b/b0/J%C3%B6ns_Jacob_Berzelius_from_Familj-Journalen1873.png"
+  },
+  "8-26": {
+    texto: "⚖️ 26 de agosto: Nacimiento de Antoine Lavoisier (1743). Padre de la química moderna, formuló la Ley de Conservación de la Masa y revolucionó la nomenclatura química.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/8/85/David_-_Portrait_of_Monsieur_Lavoisier_%28cropped%29.jpg"
+  },
+  "8-27": {
+    texto: "✈️ 27 de agosto: Primer vuelo de un avión a reacción (Heinkel He 178, 1939). La propulsión a chorro revolucionó la aviación y el transporte global.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/a/a0/Ohain_USAF_He_178_page60.jpg"
+  },
+  "8-30": {
+    texto: "⚛️ 30 de agosto: Nacimiento de Ernest Rutherford (1871). Padre de la física nuclear, su modelo atómico con núcleo denso y electrones orbitando cambió para siempre la comprensión de la materia.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Ernest_Rutherford_LOC.jpg"
+  },
+
+  // --- SEPTIEMBRE ---
+  "9-6": {
+    texto: "⚛️ 6 de septiembre: Nacimiento de John Dalton (1766), teoría atómica moderna. Propuso que la materia está hecha de átomos indivisibles con masas específicas para cada elemento.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/John_Dalton_by_Charles_Turner.jpg/250px-John_Dalton_by_Charles_Turner.jpg"
+  },
+  "9-14": {
+    texto: "⛽ 14 de septiembre: Fundación de la OPEP (1960). Organización de Países Exportadores de Petróleo, clave en la geopolítica energética y la ingeniería petroquímica.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdMNI55k4G5Ud_1BlNDITviSQnd_i3ib4U3A&s"
+  },
+  "9-16": {
+    texto: "🌎 16 de septiembre: Día Internacional de la Preservación de la Capa de Ozono. Celebramos el Protocolo de Montreal, un éxito global en la eliminación de CFCs.",
+    img: "https://www.fundacionaquae.org/wp-content/uploads/2014/12/preservacion-de-la-capa-de-ozono-e1631645497305.jpg"
+  },
+  "9-17": {
+    texto: "⚗️ 17 de septiembre: Día del Ingeniero Químico (Latinoamérica). Celebramos la profesión dedicada a transformar la materia en beneficio de la sociedad de manera sostenible y eficiente.",
+    img: "https://quimicaysociedad.org/wp-content/uploads/2018/06/quimica.jpg"
+  },
+  "9-22": {
+    texto: "🧲 22 de septiembre: Nacimiento de Michael Faraday (1791). Padre de la electroquímica y el electromagnetismo, inventó el motor eléctrico y el generador.",
+    img: "https://content.nationalgeographic.com.es/medio/2024/08/06/michael-faraday_e6d70105_240806230442_1200x630.jpg"
+  },
+  "9-30": {
+    texto: "⚖️ 30 de septiembre: Nacimiento de Joseph-Louis Proust (1754). Ley de las Proporciones Definidas: un compuesto siempre tiene la misma proporción en masa de sus elementos.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Proust_joseph.jpg"
+  },
+
+  // --- OCTUBRE ---
+  "10-1": {
+    texto: "🚀 1 de octubre: Creación de la NASA (1958). La agencia espacial estadounidense ha liderado la exploración del espacio y el desarrollo tecnológico aeroespacial.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/1280px-NASA_logo.svg.png"
+  },
+  "10-4": {
+    texto: "🛰️ 4 de octubre: Lanzamiento del Sputnik 1 (1957). Inició la era espacial y la carrera tecnológica entre superpotencias, cambiando para siempre la historia de la humanidad.",
+    img: "https://cdn.zendalibros.com/wp-content/uploads/2022/09/lanzamiento-del-sputnik-1.jpg"
+  },
+  "10-7": {
+    texto: "⚛️ 7 de octubre: Nacimiento de Niels Bohr (1885). Su modelo de niveles de energía explicó el espectro del hidrógeno y sentó las bases de la mecánica cuántica.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Niels_Bohr.jpg/960px-Niels_Bohr.jpg"
+  },
+  "10-23": {
+    texto: "🔢 23 de octubre: Día del Mol (6.022 × 10²³). Entre las 6:02 AM y las 6:02 PM celebramos la unidad fundamental que conecta el mundo microscópico con la escala industrial.",
+    img: "https://image2.slideserve.com/4272623/slide1-l.jpg"
+  },
+  "10-24": {
+    texto: "🇺🇳 24 de octubre: Día de las Naciones Unidas. Celebramos la fundación de la ONU en 1945, promoviendo la paz, la cooperación internacional y los derechos humanos.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRJqA4JvX-4nJQ1YS42CodQqKkqmE9lwKaqcg&s"
+  },
+
+  // --- NOVIEMBRE ---
+  "11-1": {
+    texto: "⚛️ 1 de noviembre: Descubrimiento del Carbono-14 (1940) por Willard Libby. Esta técnica de datación radiactiva permite determinar la edad de fósiles y artefactos arqueológicos.",
+    img: "https://quimicaysociedad.org/wp-content/uploads/2022/06/Samuel-Ruben-left-and-Martin-Kamen-right-discovered-carbon-14-C2010-The-Regents-of.ppm_.png"
+  },
+  "11-7": {
+    texto: "☢️ 7 de noviembre: Nacimiento de Marie Curie (1867) y Lise Meitner (1878). Dos gigantes de la física nuclear: Curie descubrió el polonio y el radio; Meitner explicó la fisión nuclear.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Marie_Curie_%281900%29.jpg/250px-Marie_Curie_%281900%29.jpg"
+  },
+  "11-10": {
+    texto: "🔬 10 de noviembre: Día Mundial de la Ciencia para la Paz y el Desarrollo. Promovemos el uso de la ciencia como herramienta para construir sociedades más justas y sostenibles.",
+    img: "https://pagina3.pe/wp-content/uploads/2025/11/Ciencia-para-la-paz.jpg"
+  },
+  "11-12": {
+    texto: "☄️ 12 de noviembre: Aterrizaje en un cometa por la sonda Philae (2014). Primera vez que una nave humana posa suavemente sobre la superficie de un cometa (67P/Churyumov-Gerasimenko).",
+    img: "https://images.ecestaticos.com/qDJl8aUsMiebyOGqkFpulM37Ucw=/203x0:1795x1125/992x700/filters:fill(white):format(jpg)/f.elconfidencial.com%2Foriginal%2F8a7%2F5ef%2F767%2F8a75ef767dd12ce35a4bb6a3255b9ec0.jpg"
+  },
+  "11-15": {
+    texto: "💻 15 de noviembre: Intel lanza el primer microprocesador, el 4004 (1971). Hito que permitió la miniaturización del control y la computación moderna.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/52/Intel_4004.jpg"
+  },
+  "11-20": {
+    texto: "🛰️ 20 de noviembre: Lanzamiento del primer módulo de la ISS (1998). El Zaryá ruso inició la construcción de la Estación Espacial Internacional, el mayor laboratorio orbital.",
+    img: "https://www.infobae.com/resizer/v2/YJBFS5GL5NCM3LSCNHBFIDVZSM.jpg?auth=43650642172aabe0f221ef4a85770a4a12a72b28cc291074dd1cf13eafd98866&smart=true&width=1200&height=900&quality=85"
+  },
+  "11-30": {
+    texto: "📡 30 de noviembre: Nacimiento de Jagadish Chandra Bose (1858), pionero de la radiofrecuencia. Demostró por primera vez la transmisión inalámbrica de ondas milimétricas.",
+    img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRwDtGQnLj_TVBY3QZ0apLVPm2u5Ka94EkpPA&s"
+  },
+
+  // --- DICIEMBRE ---
+  "12-2": {
+    texto: "⚛️ 2 de diciembre: Primera reacción nuclear en cadena controlada (Enrico Fermi, 1942). Bajo las gradas de la Universidad de Chicago, nació la era de la energía atómica.",
+    img: "https://rinconeducativo.org/wp-content/uploads/2020/12/Fermi_Chicago-Pile-1.png"
+  },
+  "12-5": {
+    texto: "🌱 5 de diciembre: Día Mundial del Suelo. Valoramos este recurso no renovable, fundamental para la agricultura, los ecosistemas y la regulación climática.",
+    img: "https://www.rentaoventa.com/blog-inmobiliario/wp-content/uploads/2022/12/slide-dia-del-suelo.jpg_1902800913.webp"
+  },
+  "12-10": {
+    texto: "🏅 10 de diciembre: Entrega de los Premios Nobel. Ceremonia anual que honra a quienes han contribuido excepcionalmente a la humanidad en ciencias, literatura y paz.",
+    img: "https://s1.abcstatics.com/media/cultura/2020/09/22/premios-nobel-kk3G--1248x698@abc.jpg"
+  },
+  "12-14": {
+    texto: "🔭 14 de diciembre: Nacimiento de Tycho Brahe (1546), gran observador astronómico. Sus mediciones precisas de los planetas permitieron a Kepler formular sus leyes.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Tycho_Brahe.JPG/960px-Tycho_Brahe.JPG"
+  },
+  "12-17": {
+    texto: "✈️ 17 de diciembre: Primer vuelo de los Hermanos Wright (1903). 12 segundos en el aire que cambiaron para siempre la capacidad humana de transporte y conexión global.",
+    img: "https://www.oneair.es/wp-content/uploads/2023/04/los-hermanos-wright-empezaron-con-una-tienda-de-bicicletas.jpg"
+  },
+  "12-18": {
+    texto: "⚛️ 18 de diciembre: Nacimiento de J.J. Thomson (1856), descubridor del electrón. Demostró que el átomo no era indivisible y propuso el modelo del 'pastel de pasas'.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/d/d3/J.J._Thomson_LCCN2014715407.jpg"
+  },
+  "12-21": {
+    texto: "☢️ 21 de diciembre: Descubrimiento del Radio (1898). Marie y Pierre Curie aislaron este elemento radiactivo, revolucionando la medicina y la comprensión de la radiactividad.",
+    img: "https://cdn.agenciasinc.es/var/ezwebin_site/storage/images/_aliases/img_1col/multimedia/ilustraciones/el-periodico-the-times-informa-sobre-las-extraordinarias-propiedades-del-radio/2471372-1-esl-MX/El-periodico-The-Times-informa-sobre-las-extraordinarias-propiedades-del-radio.jpg"
+  },
+  "12-24": {
+    texto: "🌕 24 de diciembre: El Apolo 8 orbita la Luna (1968). Por primera vez, seres humanos vieron la Tierra desde otro mundo celestial, leyendo el Génesis en Nochebuena.",
+    img: "https://c.files.bbci.co.uk/7024/production/_104880782_earthrise1.jpg"
+  },
+  "12-25": {
+    texto: "🍎 25 de diciembre: Nacimiento de Isaac Newton (1642) según el calendario Juliano. Padre de la física clásica, formuló las leyes del movimiento y la gravitación universal.",
+    img: "https://www.clarin.com/img/2020/03/19/YBQwCDvgv_1200x0__1.jpg"
+  },
+  "12-27": {
+    texto: "🥛 27 de diciembre: Nacimiento de Louis Pasteur (1822). Creador de la pasteurización y las vacunas, padre de la microbiología y la inmunología moderna.",
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Louis_Pasteur.jpg/250px-Louis_Pasteur.jpg"
+  }
+};
+Object.values(efemerides).forEach(e => {
+  const testImg = new Image();
+  testImg.src = e.img;
+  testImg.onerror = () => {
+    console.log("❌ Error en:", e.img);
+  };
+});
+const hoy = new Date();
+const clave = (hoy.getMonth()+1) + "-" + hoy.getDate();
+
+if (efemerides[clave]) {
+  document.getElementById("texto").innerText = efemerides[clave].texto;
+  document.getElementById("imagen").src = efemerides[clave].img;
+} else {
+  document.getElementById("texto").innerText = "🔬 Hoy celebramos los avances en ciencia e ingeniería química.";
+  document.getElementById("imagen").src = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGIICddwmpMh2dmVGvLluY_gMgnnkIIDypVA&s";
+}
+</script>
+
+</body>
+</html>
